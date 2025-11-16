@@ -1,13 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from '../features/auth/authSlice';
+import { peopleApi } from "../features/people/services/peopleApi";
 
 export const store = configureStore({
-    reducer: {
-        auth: authReducer,
-    },
+  reducer: {
+    auth: authReducer,
+    [peopleApi.reducerPath]: peopleApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(peopleApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-// I store the token in app memory so it can;'t be attacked by XSS
