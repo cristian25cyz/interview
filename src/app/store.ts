@@ -9,3 +9,5 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+// I store the token in app memory so it can;'t be attacked by XSS
