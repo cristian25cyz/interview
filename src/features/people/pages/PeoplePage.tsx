@@ -1,23 +1,30 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useGetPeopleQuery } from "../services/peopleApi";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+
 import { PeopleModal } from "../components/PeopleModal";
-import '../pages/PeoplePage.scss';
+import { PeopleCard } from "./PeopleCard";
+import { Loader } from "../../../shared/components/Loader";
+import { extractId } from "../../../shared/components/extractId";
+
+import "../pages/PeoplePage.scss";
 
 export default function PeoplePage() {
   const [page, setPage] = useState(1);
-
-  const { data, isLoading, isError } = useGetPeopleQuery(page);
   const params = useParams();
-  const navigate = useNavigate();
   const modalId = params.id;
 
-  const extractId = (url: string) => {
-    const parts = url.split("/");
-    return parts[parts.length - 2];
-  }
+  const { data, isLoading, isError } = useGetPeopleQuery(page);
 
-  if (isLoading) return <div>Loading people...</div>;
+  const goNext = useCallback(() => {
+    setPage((p) => p + 1);
+  }, []);
+
+  const goPrev = useCallback(() => {
+    setPage((p) => Math.max(1, p - 1));
+  }, []);
+
+  if (isLoading) return <Loader />;
   if (isError) return <div>Error loading data.</div>;
 
   return (
@@ -27,37 +34,23 @@ export default function PeoplePage() {
       <div className="people-grid">
         {data.results.map((person: any) => {
           const id = extractId(person.url);
-
-          return (
-          <div
-            onClick={() => navigate(`/people/${id}`)}
-            key={id}
-            className="person-card"
-          >
-            <img
-              src={`https://picsum.photos/200?random=${id}`}
-              alt={person.name}
-              style={{ width: "100%", borderRadius: "6px" }}
-            />
-
-            <h3>{person.name}</h3>
-          </div>
-          )
-})}
+          return <PeopleCard key={id} id={id} name={person.name} />;
+        })}
       </div>
 
       <div style={{ marginTop: "20px" }}>
-        <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+        <button onClick={goPrev} disabled={page === 1}>
           Previous
         </button>
 
         <span style={{ margin: "0 10px" }}>Page {page}</span>
-        <button onClick={() => setPage((p) => p + 1)} disabled={!data.next}>
+
+        <button onClick={goNext} disabled={!data.next}>
           Next
         </button>
       </div>
-      {modalId && <PeopleModal id={modalId}/>}
+
+      {modalId && <PeopleModal id={modalId} />}
     </div>
-  
   );
 }
