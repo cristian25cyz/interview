@@ -24,8 +24,12 @@ export function LoginForm() {
             const response = await loginRequest(email, password);
             dispatch(loginSuccess(response));
             navigate('/'); // here i redirect the page after login
-        } catch(err: any) {
-            setError(err.message);
+        } catch(err: unknown) {
+            if(err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Unknown error');
+            }
         } finally {
             setLoading(false);
         }

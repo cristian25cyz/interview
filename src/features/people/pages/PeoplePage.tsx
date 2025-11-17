@@ -8,6 +8,7 @@ import { Loader } from "../../../shared/components/Loader";
 import { extractId } from "../../../shared/components/extractId";
 
 import "../pages/PeoplePage.scss";
+import type { Person } from "../types";
 
 export default function PeoplePage() {
   const [page, setPage] = useState(1);
@@ -26,13 +27,14 @@ export default function PeoplePage() {
 
   if (isLoading) return <Loader />;
   if (isError) return <div>Error loading data.</div>;
+  if(!data) return null;
 
   return (
     <div style={{ padding: "20px" }}>
       <h2>Star Wars Characters</h2>
 
       <div className="people-grid">
-        {data.results.map((person: any) => {
+        {data.results.map((person: Person) => {
           const id = extractId(person.url);
           return <PeopleCard key={id} id={id} name={person.name} />;
         })}
