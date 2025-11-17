@@ -1,5 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useGetPersonByIdQuery } from "../services/peopleApi";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavourite } from "../../favourites/favouritesSlice";
+import type { RootState } from "../../../app/store";
 
 interface Props {
     id: string;
@@ -9,6 +12,14 @@ export function PeopleModal({id} : Props) {
     const navigate = useNavigate();
     const {data, isLoading, isError} = useGetPersonByIdQuery(id);
     const closeModal = () => navigate(-1);
+    const dispatch = useDispatch();
+    const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+    const favouriteIds = useSelector((state: RootState) => state.favourites.ids);
+    const isFavourite = favouriteIds.includes(id);
+
+    const handleAddFav = () => {
+        dispatch(addFavourite(id));
+    };   
 
     if(isLoading) return <div className="modal">Loading...</div>
     if(isError) return <div className="modal">Error loading person</div>
@@ -36,6 +47,18 @@ export function PeopleModal({id} : Props) {
             <p>Birth year: {data.birth_year}</p>
             <p>Films: {data.films.length}</p>
             <button onClick={closeModal} style={{marginTop: "10px"}}>Close</button>
+
+            {isAuthenticated && (
+            isFavourite ? (
+                <button disabled style={{ marginTop: "10px", opacity: 0.6 }}>
+                Already in favourites
+                </button>
+            ) : (
+                <button onClick={handleAddFav} style={{ marginTop: "10px" }}>
+                Add to favourites
+                </button>
+            )
+            )}
         </div>
     );
 }
