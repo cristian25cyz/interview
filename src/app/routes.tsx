@@ -8,8 +8,9 @@ export function AppRoutes() {
     return (
         <Routes>
             <Route path="/" element = {<PeoplePage/>} />
+            <Route path="/people/:id" element={<PeoplePage/>} />
             <Route path="/login" element={<LoginPage/>} />
-            <Route path="favourites" 
+            <Route path="/favourites" 
             element = {
                 <ProtectedRoute>
                     <FavouritesPage/>

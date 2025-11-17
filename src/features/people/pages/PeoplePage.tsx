@@ -1,10 +1,20 @@
 import { useState } from "react";
 import { useGetPeopleQuery } from "../services/peopleApi";
+import { useParams, useNavigate } from "react-router-dom";
+import { PeopleModal } from "../components/PeopleModal";
 
 export default function PeoplePage() {
   const [page, setPage] = useState(1);
 
   const { data, isLoading, isError } = useGetPeopleQuery(page);
+  const params = useParams();
+  const navigate = useNavigate();
+  const modalId = params.id;
+
+  const extractId = (url: string) => {
+    const parts = url.split("/");
+    return parts[parts.length - 2];
+  }
 
   if (isLoading) return <div>Loading people...</div>;
   if (isError) return <div>Error loading data.</div>;
@@ -14,25 +24,31 @@ export default function PeoplePage() {
       <h2>Star Wars Characters</h2>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "20px" }}>
-        {data.results.map((person: any, index: number) => (
+        {data.results.map((person: any) => {
+          const id = extractId(person.url);
+
+          return (
           <div
-            key={index}
+            onClick={() => navigate(`/people/${id}`)}
+            key={id}
             style={{
               padding: "10px",
               border: "1px solid #ccc",
               borderRadius: "8px",
               textAlign: "center",
+              cursor: "pointer"
             }}
           >
             <img
-              src={`https://picsum.photos/200?random=${index + page}`}
+              src={`https://picsum.photos/200?random=${id}`}
               alt={person.name}
               style={{ width: "100%", borderRadius: "6px" }}
             />
 
             <h3>{person.name}</h3>
           </div>
-        ))}
+          )
+})}
       </div>
 
       <div style={{ marginTop: "20px" }}>
@@ -41,11 +57,12 @@ export default function PeoplePage() {
         </button>
 
         <span style={{ margin: "0 10px" }}>Page {page}</span>
-
         <button onClick={() => setPage((p) => p + 1)} disabled={!data.next}>
           Next
         </button>
       </div>
+      {modalId && <PeopleModal id={modalId}/>}
     </div>
+  
   );
 }
