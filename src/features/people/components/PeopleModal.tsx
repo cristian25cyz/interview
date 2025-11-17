@@ -24,7 +24,8 @@ export function PeopleModal({id} : Props) {
 
     if(isLoading) return <div className="modal">Loading...</div>
     if(isError) return <div className="modal">Error loading person</div>
-
+    if (!data) return null;
+    
     return (
     <div className="modal-overlay" onClick={closeModal}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
