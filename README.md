@@ -18,6 +18,8 @@ Use the following credentials to log in:
 Email: test@example.com
 Password: 123456
 
+After you can add favourites in your list
+
 5.) 
 Features implemented
 Routing using React Router
