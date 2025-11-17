@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useGetPeopleQuery } from "../services/peopleApi";
 import { useParams, useNavigate } from "react-router-dom";
 import { PeopleModal } from "../components/PeopleModal";
+import '../pages/PeoplePage.scss';
 
 export default function PeoplePage() {
   const [page, setPage] = useState(1);
@@ -23,7 +24,7 @@ export default function PeoplePage() {
     <div style={{ padding: "20px" }}>
       <h2>Star Wars Characters</h2>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "20px" }}>
+      <div className="people-grid">
         {data.results.map((person: any) => {
           const id = extractId(person.url);
 
@@ -31,13 +32,7 @@ export default function PeoplePage() {
           <div
             onClick={() => navigate(`/people/${id}`)}
             key={id}
-            style={{
-              padding: "10px",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              textAlign: "center",
-              cursor: "pointer"
-            }}
+            className="person-card"
           >
             <img
               src={`https://picsum.photos/200?random=${id}`}
